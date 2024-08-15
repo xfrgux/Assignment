@@ -10,7 +10,14 @@ import Foundation
 struct Stock {
     let symbol: String
     let name: String
-    let currentPrice: Double
-    let lowestPrice: Double
-    let highestPrice: Double
+    let price: Double
+    let low: Double
+    let high: Double
+}
+
+struct StockForDecoder: Decodable {
+    let name: String
+    let price: Double
+    let low: Double
+    let high: Double
 }

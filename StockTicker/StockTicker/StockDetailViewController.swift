@@ -12,7 +12,7 @@ class StockDetailViewController: UIViewController, UITableViewDelegate, UITableV
     @IBOutlet weak var tableView: UITableView!
     
     var stock: Stock?
-    let cellNames: [StockDetailCellName] = [.symbol, .name, .currentPrice, .lowestPrice, .highestPrice]
+    let cellNames: [StockPropertyName] = [.symbol, .name, .currentPrice, .lowestPrice, .highestPrice]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,35 +38,34 @@ class StockDetailViewController: UIViewController, UITableViewDelegate, UITableV
         let cellName = cellNames[indexPath.row]
         var content = cell.defaultContentConfiguration()
         content.text = cellName.rawValue
-        content.secondaryText = getTextValueByCellNames(cellName)
+        content.secondaryText = getTextValueByPropertyNames(cellName, stock: stock)
         cell.contentConfiguration = content
 
         return cell
     }
     
     // MARK: - Helper
-    enum StockDetailCellName: String {
+    enum StockPropertyName: String {
         case symbol = "Symbol"
         case name = "Name"
         case currentPrice = "Current Price"
         case lowestPrice = "Daily Low"
         case highestPrice = "Daily High"
     }
-    
-    private func getTextValueByCellNames(_ cellName: StockDetailCellName) -> String {
+
+    func getTextValueByPropertyNames(_ perpertyName: StockPropertyName, stock: Stock?) -> String {
         guard let stock = stock else { return "" }
-        switch cellName {
+        switch perpertyName {
         case .symbol:
             return stock.symbol
         case .name:
             return stock.name
         case .currentPrice:
-            return String(format:"$%.2f", stock.currentPrice)
+            return String(format:"$%.2f", stock.price)
         case .lowestPrice:
-            return String(format:"$%.2f", stock.lowestPrice)
+            return String(format:"$%.2f", stock.low)
         case .highestPrice:
-            return String(format:"$%.2f", stock.highestPrice)
+            return String(format:"$%.2f", stock.high)
         }
     }
-
 }

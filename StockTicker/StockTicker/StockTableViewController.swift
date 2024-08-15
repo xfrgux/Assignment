@@ -9,16 +9,28 @@ import UIKit
 
 class StockTableViewController: UITableViewController {
     
-    private let stocks = [
-        Stock(symbol: "PEGA", name: "Pegasystems Inc.", currentPrice: 133.2, lowestPrice: 130.00, highestPrice: 140.00),
-        Stock(symbol: "MSFT", name: "Microsoft Corporation", currentPrice: 1298.26, lowestPrice: 295.00, highestPrice: 301.00),
-        Stock(symbol: "FB", name: "Facebook Inc.", currentPrice: 213.6, lowestPrice: 167, highestPrice: 269),
-        Stock(symbol: "AAPL", name: "Apple Inc.", currentPrice: 111.07, lowestPrice: 110, highestPrice: 118),
-        Stock(symbol: "TSLA", name: "Tesla Inc.", currentPrice: 370.92, lowestPrice: 210, highestPrice: 430),
-    ]
+//    private let stocks = [
+//        Stock(symbol: "PEGA", name: "Pegasystems Inc.", price: 133.2, low: 130.00, high: 140.00),
+//        Stock(symbol: "MSFT", name: "Microsoft Corporation", price: 1298.26, low: 295.00, high: 301.00),
+//        Stock(symbol: "FB", name: "Facebook Inc.", price: 213.6, low: 167, high: 269),
+//        Stock(symbol: "AAPL", name: "Apple Inc.", price: 111.07, low: 110, high: 118),
+//        Stock(symbol: "TSLA", name: "Tesla Inc.", price: 370.92, low: 210, high: 430),
+//    ]
+    var stocks = [Stock]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        fetchStockQuotes()
+    }
+    
+    func fetchStockQuotes() {
+        NetworkManager.shared.fetchStockQuotes { [weak self] stocks in
+            guard let stocks = stocks else { return }
+            self?.stocks = stocks
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+            }
+        }
     }
 
     // MARK: - Table view data source
@@ -39,7 +51,7 @@ class StockTableViewController: UITableViewController {
         let stock = stocks[indexPath.row]
         cell.labelSymbol.text = stock.symbol
         cell.labelName.text = stock.name
-        cell.labelPrice.text = String(format: "$%.2f", stock.currentPrice)
+        cell.labelPrice.text = String(format: "$%.2f", stock.price)
 
         return cell
     }
