@@ -16,20 +16,20 @@ class StockTableViewController: UITableViewController {
 //        Stock(symbol: "AAPL", name: "Apple Inc.", price: 111.07, low: 110, high: 118),
 //        Stock(symbol: "TSLA", name: "Tesla Inc.", price: 370.92, low: 210, high: 430),
 //    ]
-    var stocks = [Stock]()
+    private var stockObserver: Any?
+    private var stocks = [Stock]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        fetchStockQuotes()
+        stockObserver = NotificationCenter.default.addObserver(forName: .stocksDidUpdate, object: nil, queue: .main) { [weak self] _ in
+            self?.stocks = StockManager.shared.stocks
+            self?.tableView.reloadData()
+        }
     }
     
-    func fetchStockQuotes() {
-        NetworkManager.shared.fetchStockQuotes { [weak self] stocks in
-            guard let stocks = stocks else { return }
-            self?.stocks = stocks
-            DispatchQueue.main.async {
-                self?.tableView.reloadData()
-            }
+    deinit {
+        if let stockObserver = stockObserver {
+            NotificationCenter.default.removeObserver(stockObserver)
         }
     }
 

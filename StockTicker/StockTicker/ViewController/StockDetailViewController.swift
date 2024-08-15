@@ -12,12 +12,28 @@ class StockDetailViewController: UIViewController, UITableViewDelegate, UITableV
     @IBOutlet weak var tableView: UITableView!
     
     var stock: Stock?
-    let cellNames: [StockPropertyName] = [.symbol, .name, .currentPrice, .lowestPrice, .highestPrice]
+    private var stockObserver: Any?
+    private let cellNames: [StockPropertyName] = [.symbol, .name, .currentPrice, .lowestPrice, .highestPrice]
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        stockObserver = NotificationCenter.default.addObserver(forName: .stocksDidUpdate, object: nil, queue: .main) { [weak self] _ in
+            if let stock = self?.stock {
+                for st in StockManager.shared.stocks {
+                    if st.symbol == stock.symbol {
+                        self?.stock = st
+                        break
+                    }
+                }
+            }
+            self?.tableView.reloadData()
+        }
+    }
+    
+    deinit {
+        if let stockObserver = stockObserver {
+            NotificationCenter.default.removeObserver(stockObserver)
+        }
     }
     
     // MARK: - Table view data source
