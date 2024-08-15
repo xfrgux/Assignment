@@ -9,6 +9,8 @@ import UIKit
 
 class HomeNaviController: UINavigationController {
 
+    private var errorObserver: Any?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -18,6 +20,28 @@ class HomeNaviController: UINavigationController {
         self.navigationBar.standardAppearance = newNavBarAppearance
         self.navigationBar.scrollEdgeAppearance = newNavBarAppearance
         self.navigationBar.tintColor = .white
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        errorObserver = NotificationCenter.default.addObserver(forName: .quoteErrorOccurred, object: nil, queue: .main) { [weak self] notification in
+            if let error = notification.userInfo?["error"] as? Error {
+                self?.showErrorAlert(error: error)
+            }
+        }
+    }
+    
+    func showErrorAlert(error: Error) {
+        let alert = UIAlertController(title: "Error", message: "An error occurred: \(error.localizedDescription)", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if let observer = errorObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
     
     override func viewWillLayoutSubviews() {

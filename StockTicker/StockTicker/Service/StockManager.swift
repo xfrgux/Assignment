@@ -9,11 +9,10 @@ import Foundation
 
 class StockManager {
     
-    let stockQuotesURL = "https://6twxtqzjyoyruhqzywfrcdxoci0sltgk.lambda-url.us-east-1.on.aws/"
-    
     static let shared = StockManager()
     private var timer: Timer?
     private(set) var stocks = [Stock]()
+    private let stockQuotesURL = "https://6twxtqzjyoyruhqzywfrcdxoci0sltgk.lambda-url.us-east-1.on.aws/"
     
     func startPolling() {
         print("startPolling")
@@ -31,13 +30,19 @@ class StockManager {
     func fetchStockQuotes() {
         print("fetchStockQuotes")
         guard let url = URL(string: stockQuotesURL) else {
-            print("Invalid URL")
+            let error = NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])
+            NotificationCenter.default.post(name: .quoteErrorOccurred, object: nil, userInfo: ["error": error])
             return
         }
         
         let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-            guard let data = data, error == nil else {
-                print("Error: \(error?.localizedDescription ?? "Unknow error")")
+            if let error = error {
+                NotificationCenter.default.post(name: .quoteErrorOccurred, object: nil, userInfo: ["error": error])
+                return
+            }
+            guard let data = data, let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+                let responseError = NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])
+                NotificationCenter.default.post(name: .quoteErrorOccurred, object: nil, userInfo: ["error": responseError])
                 return
             }
             
@@ -51,7 +56,8 @@ class StockManager {
                 self?.stocks = stocks
                 NotificationCenter.default.post(name: .stocksDidUpdate, object: nil)
             } catch {
-                print("Decoding error: \(error)")
+//                print("Decoding error: \(error)")
+                NotificationCenter.default.post(name: .quoteErrorOccurred, object: nil, userInfo: ["error": error])
             }
         }
         task.resume()
@@ -60,4 +66,5 @@ class StockManager {
 
 extension Notification.Name {
     static let stocksDidUpdate = Notification.Name("stocksDidUpdate")
+    static let quoteErrorOccurred = Notification.Name("quoteErrorOccurred")
 }
