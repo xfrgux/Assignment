@@ -91,7 +91,7 @@
                                     <outlet property="labelName" destination="1R5-aU-hb0" id="tcc-Tu-sTM"/>
                                     <outlet property="labelPrice" destination="BMR-8W-WFN" id="HYR-io-kPt"/>
                                     <outlet property="labelSymbol" destination="qP5-wL-5cm" id="PFZ-Aa-Z1j"/>
-                                    <segue destination="OEe-tS-bId" kind="show" id="CUc-eh-FUJ"/>
+                                    <segue destination="OEe-tS-bId" kind="show" identifier="ShowStockDetail" id="CUc-eh-FUJ"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>

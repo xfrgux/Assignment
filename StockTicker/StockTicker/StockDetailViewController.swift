@@ -18,7 +18,6 @@ class StockDetailViewController: UIViewController, UITableViewDelegate, UITableV
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        stock = Stock(symbol: "PEGA", name: "Pegasystems Inc", currentPrice: 133.33, lowestPrice: 130.00, highestPrice: 140.00)
     }
     
     // MARK: - Table view data source
@@ -44,17 +43,6 @@ class StockDetailViewController: UIViewController, UITableViewDelegate, UITableV
 
         return cell
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
     
     // MARK: - Helper
     enum StockDetailCellName: String {
