@@ -19,7 +19,7 @@ Clone the repository to your local machine using the following command:
 
 ```bash
 git clone https://github.com/xfrgux/Assignment.git
-cd StockTicker/StockTicker
+cd Assignment/StockTicker
 ```
 
 ### Opening the Project in Xcode
