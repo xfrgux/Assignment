@@ -7,18 +7,18 @@ A simple iOS application that tracks prices of a few popular stocks. It's for th
 Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
-
-- macOS Sonoma or later
-- Xcode 15.0 or later
+The project was written an built with the following specification:
+- macOS Sonoma 14.5
+- Xcode 15.4
 - Minimum Deployments iOS 15.0
-- An active internet connection for fetching stock data
+- An active internet connection for requesting API
 
 ### Cloning the Repository
 
 Clone the repository to your local machine using the following command:
 
 ```bash
-git clone https://github.com/xfrgux/StockTicker.git
+git clone https://github.com/xfrgux/Assignment.git
 cd StockTicker/StockTicker
 ```
 
