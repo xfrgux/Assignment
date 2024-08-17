@@ -19,18 +19,28 @@ class StockTableViewController: UITableViewController {
     private var stockObserver: Any?
     private var stocks = [Stock]()
 
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        stockObserver = NotificationCenter.default.addObserver(forName: .stocksDidUpdate, object: nil, queue: .main) { [weak self] _ in
-            self?.stocks = StockManager.shared.stocks
-            self?.tableView.reloadData()
-        }
+        setupUI()
+        addStockObserver()
     }
     
     deinit {
         if let stockObserver = stockObserver {
             NotificationCenter.default.removeObserver(stockObserver)
         }
+    }
+    
+    // MARK: - Setup UI
+    private func setupUI() {
+        view.backgroundColor = .white
+        navigationItem.title = "Popular Stocks"
+        navigationItem.backButtonTitle = "PEGA"
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.register(StockListCell.self, forCellReuseIdentifier: StockListCell.identifier)
+        tableView.separatorStyle = .none
+        tableView.contentInset = UIEdgeInsets(top: 15, left: 0, bottom: 0, right: 0)
     }
 
     // MARK: - Table view data source
@@ -45,13 +55,11 @@ class StockTableViewController: UITableViewController {
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "stockListCell", for: indexPath) as! StockListCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: StockListCell.identifier, for: indexPath) as! StockListCell
 
         // Configure the cell...
         let stock = stocks[indexPath.row]
-        cell.labelSymbol.text = stock.symbol
-        cell.labelName.text = stock.name
-        cell.labelPrice.text = String(format: "$%.2f", stock.price)
+        cell.configureCellWith(symbol: stock.symbol, name: stock.name, price: stock.price)
 
         return cell
     }
@@ -63,6 +71,14 @@ class StockTableViewController: UITableViewController {
         let destinationVC = StockDetailViewController()
         destinationVC.stock = selectedStock
         navigationController?.pushViewController(destinationVC, animated: true)
+    }
+    
+    // MARK: - Helper
+    private func addStockObserver() {
+        stockObserver = NotificationCenter.default.addObserver(forName: .stocksDidUpdate, object: nil, queue: .main) { [weak self] _ in
+            self?.stocks = StockManager.shared.stocks
+            self?.tableView.reloadData()
+        }
     }
 
 }

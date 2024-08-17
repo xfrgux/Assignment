@@ -48,8 +48,8 @@ class StockDetailViewController: UIViewController, UITableViewDelegate, UITableV
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: safeArea.topAnchor),
             tableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
-            tableView.leftAnchor.constraint(equalTo: safeArea.leftAnchor),
-            tableView.rightAnchor.constraint(equalTo: safeArea.rightAnchor)
+            tableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
         ])
     }
     
