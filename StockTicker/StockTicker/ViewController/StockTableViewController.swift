@@ -55,22 +55,14 @@ class StockTableViewController: UITableViewController {
 
         return cell
     }
-
     
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-        if segue.identifier == "ShowStockDetail" {
-            guard let cell = sender as? UITableViewCell, let indexPath = tableView.indexPath(for: cell) else { return }
-            let selectedStock = stocks[indexPath.row]
-            if let destinationVC = segue.destination as? StockDetailViewController {
-                destinationVC.stock = selectedStock
-            }
-        }
+    // MARK: - Table view delegate
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedStock = stocks[indexPath.row]
+        let destinationVC = StockDetailViewController()
+        destinationVC.stock = selectedStock
+        navigationController?.pushViewController(destinationVC, animated: true)
     }
-    
 
 }

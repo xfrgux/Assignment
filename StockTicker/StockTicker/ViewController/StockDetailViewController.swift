@@ -9,25 +9,29 @@ import UIKit
 
 class StockDetailViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    @IBOutlet weak var tableView: UITableView!
-    
     var stock: Stock?
     private var stockObserver: Any?
     private let cellNames: [StockPropertyName] = [.symbol, .name, .currentPrice, .lowestPrice, .highestPrice]
+    private let cellReuseIdentifier = "StockDetailCell"
     
+    // MARK: - UI Element
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.separatorStyle = .none
+        tableView.allowsSelection = false
+        tableView.contentInset = UIEdgeInsets(top: 15, left: 0, bottom: 0, right: 0)
+        //tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellReuseIdentifier)
+        return tableView
+    }()
+    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        stockObserver = NotificationCenter.default.addObserver(forName: .stocksDidUpdate, object: nil, queue: .main) { [weak self] _ in
-            if let stock = self?.stock {
-                for st in StockManager.shared.stocks {
-                    if st.symbol == stock.symbol {
-                        self?.stock = st
-                        break
-                    }
-                }
-            }
-            self?.tableView.reloadData()
-        }
+        setupUI()
+        addStockObserver()
     }
     
     deinit {
@@ -35,6 +39,20 @@ class StockDetailViewController: UIViewController, UITableViewDelegate, UITableV
             NotificationCenter.default.removeObserver(stockObserver)
         }
     }
+    
+    // MARK: - Setup UI
+    private func setupUI() {
+        view.backgroundColor = .white
+        view.addSubview(tableView)
+        let safeArea = view.safeAreaLayoutGuide
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+            tableView.leftAnchor.constraint(equalTo: safeArea.leftAnchor),
+            tableView.rightAnchor.constraint(equalTo: safeArea.rightAnchor)
+        ])
+    }
+    
     
     // MARK: - Table view data source
 
@@ -48,7 +66,8 @@ class StockDetailViewController: UIViewController, UITableViewDelegate, UITableV
 
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "StockDetailCell", for: indexPath)
+        // Try to dequeue the cell. If no cell is available, initialize one with the desired style
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier) ?? UITableViewCell(style: .value1, reuseIdentifier: cellReuseIdentifier)
 
         // Configure the cell...
         let cellName = cellNames[indexPath.row]
@@ -82,6 +101,20 @@ class StockDetailViewController: UIViewController, UITableViewDelegate, UITableV
             return String(format:"$%.2f", stock.low)
         case .highestPrice:
             return String(format:"$%.2f", stock.high)
+        }
+    }
+    
+    private func addStockObserver() {
+        stockObserver = NotificationCenter.default.addObserver(forName: .stocksDidUpdate, object: nil, queue: .main) { [weak self] _ in
+            if let stock = self?.stock {
+                for st in StockManager.shared.stocks {
+                    if st.symbol == stock.symbol {
+                        self?.stock = st
+                        break
+                    }
+                }
+            }
+            self?.tableView.reloadData()
         }
     }
 }

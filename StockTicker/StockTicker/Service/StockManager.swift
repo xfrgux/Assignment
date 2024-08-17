@@ -15,7 +15,7 @@ class StockManager {
     private let stockQuotesURL = "https://6twxtqzjyoyruhqzywfrcdxoci0sltgk.lambda-url.us-east-1.on.aws/"
     
     func startPolling() {
-        print("startPolling")
+//        print("startPolling")
         fetchStockQuotes()
         timer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true, block: { [weak self] _ in
             self?.fetchStockQuotes()
@@ -23,12 +23,12 @@ class StockManager {
     }
     
     func stopPolling() {
-        print("stopPolling")
+//        print("stopPolling")
         timer?.invalidate()
     }
     
     func fetchStockQuotes() {
-        print("fetchStockQuotes")
+//        print("fetchStockQuotes")
         guard let url = URL(string: stockQuotesURL) else {
             let error = NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])
             NotificationCenter.default.post(name: .quoteErrorOccurred, object: nil, userInfo: ["error": error])
